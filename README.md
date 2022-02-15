@@ -5,7 +5,8 @@ the boat in terms of its geometric parameters. An example is provided in
 asso99.geom, and contains the description of each parameter. The vpp can then
 be run from the command line as
 
-python vpp.py <boatname> <windSpeed> [<windSpeed> <windSpeed> ...]
+'python vpp.py <boatname> <windSpeed> [<windSpeed> <windSpeed> ...]'
+
 
 where windSpeed is the true wind speed at which the boat performance are
 computed. At least one, and as many as you want, with speeds must be provided.
