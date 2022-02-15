@@ -39,6 +39,7 @@ def readDict(filename):
 ### HYDRODYNAMIC SETUP ###
 ##########################
 def RrhSetUp(geom,phys):
+  '''Hull residuary resistance'''
   FnD = array(r_[.10:.61:.05])
 
   coeff = array( [[-0.0014 ,  0.0403 ,  0.0470 , -0.0227 , -0.0119 ,  0.0061 , -0.0086 , -0.0307 , -0.0553] , 
@@ -62,6 +63,7 @@ def RrhSetUp(geom,phys):
   return Rrh
 
 def RrhHSetUp(geom,phys):
+  '''Change in hull residuary resistance due to heel'''
   FnD = array(r_[.10:.61:.05])
 
   coeff = array( [[  0      ,  0      ,  0      ,  0      ,  0      ,  0     ] ,
@@ -88,6 +90,7 @@ def RrhHSetUp(geom,phys):
   return RrhH
 
 def RrkSetUp(geom,phys):
+  '''Keel viscous resistance'''
   FnD = array(r_[.10:.61:.05])
   
   coeff = array( [[  0       , 0       ,  0       ,  0      ],
@@ -111,6 +114,7 @@ def RrkSetUp(geom,phys):
   return Rrk
 
 def RrkHSetUp(geom,phys):
+  '''Change in keel resiudary resistance due to heel'''
   coeff = array( [ -3.5837 , -0.0518 , 0.5958 , 0.2055] )
   vect  = array( [geom['TCAN']/geom['T'] , geom['BWL']/geom['TCAN'] , (geom['BWL']*geom['TCAN'])/(geom['T']*geom['TCAN']) , geom['LWL']/geom['DIVCAN']**1/3 ] )
   Ch = dot( coeff , vect )
@@ -120,6 +124,7 @@ def RrkHSetUp(geom,phys):
   return RrkH
 
 def RiSetUp(geom,phys):
+  '''Keel induced resistance'''
   coeffA = array([[3.7455 , -3.6246 , 0.0589 , -0.0296],
                   [4.4892 , -4.8454 , 0.0294 , -0.0176],
                   [3.9592 , -3.9804 , 0.0283 , -0.0075],
@@ -155,6 +160,7 @@ def RiSetUp(geom,phys):
   return Ri
 
 def RvhSetUp(geom,phys):
+  '''Hull viscous resistance'''
   def Rvh(Fn):
     V = Fn*sqrt(phys['g']*geom['LWL'])
     Rn = geom['LWL'] * 0.7 * V / phys['ni_w']
@@ -165,6 +171,7 @@ def RvhSetUp(geom,phys):
   return Rvh
 
 def RvhHSetUp(geom,phys):
+  '''Change in hull viscous resistance due to heel'''
   phiD = array( [0. , 5. , 10. , 15. , 20. , 25. , 30. , 35.] ) * pi/180.
 
   coeff = array( [[  0.000 ,  0.000 ,  0.000 , 0.000],
@@ -192,6 +199,7 @@ def RvhHSetUp(geom,phys):
   return RvhH
 
 def RvkSetUp(geom,phys):
+  '''Keel viscous resistance'''
   def Rvk(Fn):
     V = Fn*sqrt(phys['g']*geom['LWL'])
     Rn = geom['CHMEK'] * V / phys['ni_w'];
@@ -202,6 +210,7 @@ def RvkSetUp(geom,phys):
   return Rvk
 
 def RvrSetUp(geom,phys):
+  '''Rudder viscous resistance'''
   def Rvr(Fn):
     V = Fn*sqrt(phys['g']*geom['LWL'])
     Rn = geom['CHMER'] * V / phys['ni_w'];
@@ -211,15 +220,11 @@ def RvrSetUp(geom,phys):
 
   return Rvr
 
-#################################
-### END OF HYDRODYNAMIC SETUP ###
-#################################
-
 #########################
 ### AERODYNAMIC SETUP ###
 #########################
 def aeroSetUp(geom,phys):
-  #calcoluating sails area and ZCE (above waterline)
+  '''calculation of sails' area and ZCE (above waterline)'''
   AM = 0.5 * geom['P'] * geom['E'] *geom['MROACH']             #mainsail area
   AJ = 0.5 * sqrt( geom['I']**2 + geom['J']**2) * geom['LPG']   #jib area
   AS = 1.15 * geom['SL'] * geom['J']                         #spi area
@@ -324,10 +329,6 @@ def aeroSetUp(geom,phys):
   
   return aero
 
-################################
-### END OF AERODYNAMIC SETUP ###
-################################
-
 #####################
 ### THE VPP CLASS ###
 #####################
@@ -398,7 +399,6 @@ class vpp:
   ## THE ACTUAL OPTIMIZATION ##
   #############################
   def solve(self,V_tw,alfa_tw,x0 = array([2.,0.,1.,1.]) ):
-
     cons = (
         {'type': 'eq', 'fun' : lambda x: self.force   (x[0],x[1],x[2],x[3],V_tw,alfa_tw) },   # constrain on force
         {'type': 'eq', 'fun' : lambda x: self.momentum(x[0],x[1],x[2],x[3],V_tw,alfa_tw) }    # constrain on momentum
@@ -454,10 +454,6 @@ class vpp:
       ax1.plot(r.t+dt, sol[1],'.k')
       ax2.plot(r.t+dt, sol[2]*180/pi,'.r')
       plt.pause(.01)
-
-############################
-### END OF THE VPP CLASS ###
-############################
 
 #####################
 ### MAIN FUNCTION ###
@@ -534,8 +530,3 @@ if __name__ == "__main__":
   print('figures saved in %s'%figname)
   print('close all windows to exit')
   plt.show()
-
-
-############################
-### END OF MAIN FUNCTION ###
-############################
